@@ -56,28 +56,6 @@
 // Necessary specificity for overriding history viewer styling
 .history-viewer__row.history-viewer__snapshot {
   background: transparent;
-  position: relative;
-  &:before {
-    content: '';
-    width: 2px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    background: #ccc;
-    left: 23px;
-  }
-  &:after {
-    content: '';
-    width: 10px;
-    height: 10px;
-    border-radius: 99px;
-    background: #bbb;
-    position: absolute;
-    left: 19px;
-    top: 50%;
-    margin-top: -5px;
-  }
-
   &--initial {
     &:before {
       top: ($table-cell-padding * 2 + $line-height-base) / 2;
@@ -86,12 +64,6 @@
   &--muted {
     .history-viewer__version-link * {
       color: #ddd !important;
-    }
-  }
-
-  &.history-viewer__row--current {
-    &:before, &:after {
-      display:none;
     }
   }
 }

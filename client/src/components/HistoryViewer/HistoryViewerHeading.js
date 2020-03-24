@@ -77,9 +77,6 @@ class HistoryViewerHeading extends Component {
         <span className="history-viewer__version-state" role="columnheader">
           {i18n._t('HistoryViewer.Date', 'Date')}
         </span>
-        <span className="history-viewer__message" role="columnheader">
-          {i18n._t('HistoryViewer.Activity', 'Activity')}
-        </span>
         <span className="history-viewer__author" role="columnheader">
           {i18n._t('HistoryViewer.Author', 'Author')}
         </span>

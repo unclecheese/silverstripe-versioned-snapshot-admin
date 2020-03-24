@@ -19,6 +19,7 @@ class HistoryViewerSnapshot extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleActivity = this.handleActivity.bind(this);
   }
 
   getClassNames() {
@@ -56,8 +57,13 @@ class HistoryViewerSnapshot extends Component {
     }
   }
 
+  handleActivity(event) {
+    event.preventDefault();
+    alert('activity');
+  }
+
   render() {
-    const { version, StateComponent, FormActionComponent, isComparing, isActive } = this.props;
+    const { version, FormActionComponent, isComparing, isActive } = this.props;
     const { Author: { FirstName, Surname } } = version;
     const author = `${FirstName || ''} ${Surname || ''}`;
     const rowTitle = i18n._t('HistoryViewerSnapshot.GO_TO_SNAPSHOT', 'Go to snapshot at {date}');
@@ -78,14 +84,21 @@ class HistoryViewerSnapshot extends Component {
             <small className="text-muted">{getDateFromVersion(version)}</small>
           </span>
 
-          <StateComponent
-            version={version}
-          />
           <span className="history-viewer__author" role="cell">
             {author}
           </span>
           <span className="history-viewer__actions" role="cell">
-            {isActive && (
+          <FormActionComponent
+              onClick={this.handleActivity}
+              icon="pulse"
+              attributes={{
+                title: i18n._t('HistoryViewerVersion.SHOW_ACTIVITY', 'Show activity'),
+              }}
+              title={null}
+              buttonStyle="outline-dark"
+              extraClass="history-viewer__activity-button"
+            />
+            {isActive && (            
             <FormActionComponent
               onClick={this.handleClose}
               icon="cancel"
@@ -126,10 +139,9 @@ function mapDispatchToProps(dispatch) {
 export default compose(
   connect(null, mapDispatchToProps),
   inject(
-    ['FormAction', 'SnapshotHistoryViewerSnapshotState'],
-    (FormAction, HistoryViewerSnapshotState) => ({
+    ['FormAction'],
+    (FormAction) => ({
         FormActionComponent: FormAction,
-        StateComponent: HistoryViewerSnapshotState,
       })
   )
 )(HistoryViewerSnapshot);

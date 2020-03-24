@@ -24,6 +24,7 @@ class HistoryViewerVersion extends Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleCompare = this.handleCompare.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleActivity = this.handleActivity.bind(this);
   }
 
   /**
@@ -91,6 +92,11 @@ class HistoryViewerVersion extends Component {
     onCompareMode(version);
   }
 
+  handleActivity(event) {
+    event.preventDefault();
+    alert('activity version');
+  }
+
   /**
    * When closing the version, return back to the list view via Redux action dispatch
    */
@@ -126,6 +132,23 @@ class HistoryViewerVersion extends Component {
       >
         {translatedText}
       </FormActionComponent>
+    );
+  }
+
+  renderActivityButton() {
+    const { FormActionComponent } = this.props;
+
+    return (
+      <FormActionComponent
+      onClick={this.handleActivity}
+      icon="pulse"
+      attributes={{
+        title: i18n._t('HistoryViewerVersion.SHOW_ACTIVITY', 'Show activity'),
+      }}
+      title={null}
+      buttonStyle="outline-dark"
+      extraClass="history-viewer__activity-button"
+      />            
     );
   }
 
@@ -191,12 +214,15 @@ class HistoryViewerVersion extends Component {
 
     if (!isActive && !compare) {
       return (
-        <span className="history-viewer__actions" role="cell" />
+        <span className="history-viewer__actions" role="cell">
+          {this.renderActivityButton()}
+        </span>
       );
     }
 
     return (
       <span className="history-viewer__actions" role="cell">
+        {this.renderActivityButton()}
         {this.renderCompareButton()}
         {this.renderSelectedMessage()}
         {this.renderClearButton()}
@@ -221,12 +247,14 @@ class HistoryViewerVersion extends Component {
             <span>{version.ActivityAgo}</span>
             {' '}
             <small className="text-muted">{getDateFromVersion(version)}</small>
+            {version.ActivityType === 'PUBLISHED' && (
+              <span clasName="history-viewer__publish-badge">
+                <span className="icon font-icon-rocket" /> Published
+              </span>
+            )}
+
           </span>
 
-          <StateComponent
-            version={version}
-            isActive={isActive}
-          />
           <span className="history-viewer__author" role="cell">
             {this.getAuthor()}
           </span>
