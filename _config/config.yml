@@ -18,6 +18,8 @@ SilverStripe\ORM\DataObject:
 SilverStripe\GraphQL\Manager:
   schemas:
     admin:
+      types:
+        SnapshotActivityEntry: SilverStripe\SnapshotAdmin\SnapshotActivityEntryType
       scaffolding_providers:
         - SilverStripe\SnapshotAdmin\SnapshotScaffoldingProvider
 SilverStripe\Admin\LeftAndMain:

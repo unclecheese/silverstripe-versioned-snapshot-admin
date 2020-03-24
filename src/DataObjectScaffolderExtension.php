@@ -47,6 +47,8 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     'ActivityDescription' => Type::string(),
                     'ActivityType' => $this->createActivityEnum(),
                     'ActivityAgo' => Type::string(),
+                    'ActivityFeed' => Type::listOf($manager->getType('SnapshotActivityEntry')),
+                    'PublishedSummary' => Type::listOf(Type::string()),
                     'OriginVersion' => $manager->getType($versionTypeName),
                     'Author' => $manager->getType($memberType),
                     'IsFullVersion' => Type::boolean(),
@@ -63,24 +65,9 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
             ->nestedQuery('SnapshotHistory', new ReadSnapshotHistory($class, $snapshotName));
     }
 
-    protected function createActivityEnum()
+    public function createActivityEnum()
     {
-        if (!$this->activityEnum) {
-            $this->activityEnum = new EnumType([
-                'name' => 'SnapshotActivityType',
-                'values' => [
-                    ActivityEntry::ADDED,
-                    ActivityEntry::CREATED,
-                    ActivityEntry::DELETED,
-                    ActivityEntry::MODIFIED,
-                    ActivityEntry::PUBLISHED,
-                    ActivityEntry::UNPUBLISHED,
-                    ActivityEntry::REMOVED,
-                ]
-            ]);
-        }
-
-        return $this->activityEnum;
+        return SnapshotActivityType::singleton()->getType();
     }
     /**
      * @param string $class
