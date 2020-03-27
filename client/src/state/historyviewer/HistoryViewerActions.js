@@ -115,3 +115,19 @@ export function setCompareTo(version) {
     payload: { version },
   };
 }
+
+export function showActivity(snapshotID) {
+  console.log('showactivity', snapshotID);
+  return {
+    type: HISTORY_VIEWER.SHOW_ACTIVITY,
+    payload: snapshotID,
+  };
+}
+
+export function hideActivity(snapshotID) {
+  return {
+    type: HISTORY_VIEWER.HIDE_ACTIVITY,
+    payload: snapshotID,
+  };
+}
+

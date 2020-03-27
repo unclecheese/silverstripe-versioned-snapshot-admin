@@ -75,6 +75,7 @@ class HistoryViewer extends Component {
    */
   getVersions() {
     const { versions } = this.props;
+    const hash = versions && versions.SnapshotHash;
     const edges = (versions && versions.SnapshotHistory && versions.SnapshotHistory.edges)
       ? versions.SnapshotHistory.edges
       : [];

@@ -20,6 +20,9 @@ SilverStripe\GraphQL\Manager:
     admin:
       types:
         SnapshotActivityEntry: SilverStripe\SnapshotAdmin\SnapshotActivityEntryType
+        Snapshot: SilverStripe\SnapshotAdmin\SnapshotType
+      queries:
+        readSnapshot: SilverStripe\SnapshotAdmin\SnapshotQuery
       scaffolding_providers:
         - SilverStripe\SnapshotAdmin\SnapshotScaffoldingProvider
 SilverStripe\Admin\LeftAndMain:

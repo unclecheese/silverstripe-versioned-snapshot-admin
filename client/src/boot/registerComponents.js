@@ -11,6 +11,9 @@ import HistoryViewerSnapshotState from 'components/HistoryViewer/HistoryViewerSn
 import HistoryViewerSnapshot from 'components/HistoryViewer/HistoryViewerSnapshot';
 import HistoryViewerCompareWarning from 'components/HistoryViewer/HistoryViewerCompareWarning';
 import RollbackMutation from 'components/HistoryViewer/RollbackMutation';
+import ActivityButton from 'components/HistoryViewer/ActivityButton';
+import CloseButton from 'components/HistoryViewer/CloseButton';
+import ActivityPanel from 'components/HistoryViewer/ActivityPanel';
 
 /**
  * The reason we have not gone down the route of using the same name for components
@@ -36,6 +39,9 @@ export default () => {
     SnapshotHistoryViewerSnapshotState: HistoryViewerSnapshotState,
     SnapshotHistoryViewerSnapshot: HistoryViewerSnapshot,
     SnapshotHistoryViewerCompareWarning: HistoryViewerCompareWarning,
+    SnapshotHistoryActivityButton: ActivityButton,
+    SnapshotHistoryCloseButton: CloseButton,
+    SnapshotActivityPanel: ActivityPanel,
   }, { force: true });
 };
 

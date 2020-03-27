@@ -11,7 +11,7 @@ import {
 } from 'state/historyviewer/HistoryViewerActions';
 import classNames from 'classnames';
 import { versionType } from 'types/versionType';
-import getDateFromVersion from '../../helpers/getDateFromVersion';
+import { getDate, getTime } from '../../helpers/dates';
 
 class HistoryViewerSnapshot extends Component {
   constructor(props) {
@@ -19,7 +19,6 @@ class HistoryViewerSnapshot extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.handleActivity = this.handleActivity.bind(this);
   }
 
   getClassNames() {
@@ -57,13 +56,16 @@ class HistoryViewerSnapshot extends Component {
     }
   }
 
-  handleActivity(event) {
-    event.preventDefault();
-    alert('activity');
-  }
-
   render() {
-    const { version, FormActionComponent, isComparing, isActive } = this.props;
+    const {
+      version,
+      ActivityButtonComponent,
+      CloseButtonComponent,
+      isComparing,
+      isActive,
+      isShowingActivity,
+      ActivityPanelComponent,
+    } = this.props;
     const { Author: { FirstName, Surname } } = version;
     const author = `${FirstName || ''} ${Surname || ''}`;
     const rowTitle = i18n._t('HistoryViewerSnapshot.GO_TO_SNAPSHOT', 'Go to snapshot at {date}');
@@ -79,41 +81,29 @@ class HistoryViewerSnapshot extends Component {
           tabIndex={isComparing ? -1 : 0}
         >
           <span className="history-viewer__message" role="cell">
-            <span>{version.ActivityAgo}</span>
-            {' '}
-            <small className="text-muted">{getDateFromVersion(version)}</small>
+            <span className="history-viewer__date">
+              {getDate(version.LastEdited)}
+              {' '}
+              <small>{getTime(version.LastEdited)}</small>
+            </span>
           </span>
 
           <span className="history-viewer__author" role="cell">
             {author}
           </span>
           <span className="history-viewer__actions" role="cell">
-          <FormActionComponent
-              onClick={this.handleActivity}
-              icon="pulse"
-              attributes={{
-                title: i18n._t('HistoryViewerVersion.SHOW_ACTIVITY', 'Show activity'),
-              }}
-              title={null}
-              buttonStyle="outline-dark"
-              extraClass="history-viewer__activity-button"
-            />
-            {isActive && (            
-            <FormActionComponent
-              onClick={this.handleClose}
-              icon="cancel"
-              // Provide the title as an attribute to prevent it
-              // from rendering as text on the button
-              attributes={{
-                title: i18n._t('HistoryViewerVersion.CLOSE', 'Close'),
-              }}
-              title={null}
-              buttonStyle="outline-light"
-              extraClass="history-viewer__close-button"
-            />
+            <ActivityButtonComponent snapshotID={version.ID} />
+            {isActive && (       
+              <CloseButtonComponent onClose={this.handleClose} />
             )}
           </span>
         </span>
+        {isShowingActivity && (
+          <React.Fragment>
+            <div style={{flexBasis: '100%', height: 0}} />
+            <ActivityPanelComponent snapshotID={version.ID} />
+          </React.Fragment>
+        )}
       </li>
     );
   }
@@ -124,6 +114,21 @@ HistoryViewerSnapshot.propTypes = {
   version: versionType,
   initial: PropTypes.bool,
   isComparing: PropTypes.bool,
+  isShowingActivity: PropTypes.bool,
+  FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  ActivityButtonComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  CloseButtonComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  ActivityPanelComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+};
+
+HistoryViewerSnapshot.defaultProps = {
+  isShowingActivity: false,
+};
+
+function mapStateToProps (state, ownProps) {
+  return {
+    isShowingActivity: state.versionedAdmin.historyViewer.showingActivity.includes(ownProps.version.ID),
+  }
 };
 
 function mapDispatchToProps(dispatch) {
@@ -137,11 +142,14 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default compose(
-  connect(null, mapDispatchToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   inject(
-    ['FormAction'],
-    (FormAction) => ({
+    ['FormAction', 'SnapshotHistoryActivityButton', 'SnapshotHistoryCloseButton', 'SnapshotActivityPanel'],
+    (FormAction, ActivityButtonComponent, CloseButtonComponent, ActivityPanelComponent) => ({
         FormActionComponent: FormAction,
+        ActivityButtonComponent,
+        CloseButtonComponent,
+        ActivityPanelComponent,
       })
   )
 )(HistoryViewerSnapshot);

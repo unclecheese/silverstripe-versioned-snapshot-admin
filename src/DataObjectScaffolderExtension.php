@@ -47,8 +47,6 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     'ActivityDescription' => Type::string(),
                     'ActivityType' => $this->createActivityEnum(),
                     'ActivityAgo' => Type::string(),
-                    'ActivityFeed' => Type::listOf($manager->getType('SnapshotActivityEntry')),
-                    'PublishedSummary' => Type::listOf(Type::string()),
                     'OriginVersion' => $manager->getType($versionTypeName),
                     'Author' => $manager->getType($memberType),
                     'IsFullVersion' => Type::boolean(),
@@ -60,7 +58,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
         ]);
 
         $manager->addType($snapshotType, $snapshotName);
-
+        $owner->addField('SnapshotHash');
         $owner
             ->nestedQuery('SnapshotHistory', new ReadSnapshotHistory($class, $snapshotName));
     }

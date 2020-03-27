@@ -30,6 +30,7 @@ class SnapshotActivityType
                     ActivityEntry::PUBLISHED,
                     ActivityEntry::UNPUBLISHED,
                     ActivityEntry::REMOVED,
+                    ActivityEntry::UNCHANGED,
                 ]
             ]);
         }

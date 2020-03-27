@@ -8,6 +8,7 @@ const createSnapshotsQuery = (typeName, isPreviewable) => {
         ) {
           ID
           ${isPreviewable ? 'AbsoluteLink' : ''}
+          SnapshotHash
           SnapshotHistory (limit: $limit, offset: $offset) {
             pageInfo {
               totalCount

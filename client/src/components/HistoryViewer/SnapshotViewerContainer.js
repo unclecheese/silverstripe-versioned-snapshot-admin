@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import { inject } from 'lib/Injector';
 import createSnapshotsQuery from '../../graphql/createSnapshotsQuery';
+import SnapshotContextProvider from './SnapshotContextProvider';
 
 const SnapshotViewerContainer = ({
     typeName,
@@ -29,7 +30,7 @@ const SnapshotViewerContainer = ({
                   readOne = data[`readOne${typeName}`];
                 }
                 const versions = readOne || [];
-                
+                const originHash = versions && versions.SnapshotHash;
                 const errors = error && error.graphQLErrors &&
                 error.graphQLErrors.map((graphQLError) => graphQLError.message);
                   
@@ -58,7 +59,9 @@ const SnapshotViewerContainer = ({
                 };
   
                 return (
-                    <SnapshotViewerComponent {...props} />
+                    <SnapshotContextProvider originHash={originHash}>
+                        <SnapshotViewerComponent {...props} />
+                    </SnapshotContextProvider>
                 );
             }}
     </Query>

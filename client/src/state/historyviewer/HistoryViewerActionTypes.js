@@ -11,4 +11,6 @@ export default [
   'SET_COMPARE_MODE',
   'SET_COMPARE_FROM',
   'SET_COMPARE_TO',
+  'SHOW_ACTIVITY',
+  'HIDE_ACTIVITY',
 ].reduce((obj, item) => Object.assign(obj, { [item]: `HISTORY_VIEWER.${item}` }), {});

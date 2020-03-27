@@ -9,6 +9,7 @@ const initialState = {
   compare: defaultCompare,
   loading: false,
   messages: [],
+  showingActivity: [],
 };
 
 /**
@@ -119,6 +120,23 @@ export default function historyViewerReducer(state = initialState, { type, paylo
         currentVersion: versionFrom,
         compare: { versionFrom, versionTo },
       };
+    }
+
+    case HISTORY_VIEWER.SHOW_ACTIVITY: {
+      return {
+        ...state,
+        showingActivity: [
+          ...state.showingActivity,
+          payload,
+        ],
+      }
+    }
+
+    case HISTORY_VIEWER.HIDE_ACTIVITY: {
+      return {
+        ...state,
+        showingActivity: state.showingActivity.filter(id => id !== payload),
+      }
     }
 
     default:
