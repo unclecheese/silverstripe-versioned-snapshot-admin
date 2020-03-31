@@ -75,22 +75,11 @@ class HistoryViewer extends Component {
    */
   getVersions() {
     const { versions } = this.props;
-    const hash = versions && versions.SnapshotHash;
-    const edges = (versions && versions.SnapshotHistory && versions.SnapshotHistory.edges)
-      ? versions.SnapshotHistory.edges
+    const edges = (versions && versions.Versions && versions.Versions.edges)
+      ? versions.Versions.edges
       : [];
-    return edges.map(({ node }) => {
-      return {
-        ...node,
-        ...node.OriginVersion,
-        AbsoluteLink: (node.IsFullVersion && node.OriginVersion)
-          ? node.OriginVersion.AbsoluteLink
-          : versions.AbsoluteLink,
-        Version: node.IsFullVersion && node.OriginVersion
-          ? node.OriginVersion.Version
-          : node.BaseVersion,
-      }
-    });
+      
+    return edges.map(({ node }) => node);
   }
 
   /**

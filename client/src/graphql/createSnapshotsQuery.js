@@ -3,51 +3,42 @@ import gql from 'graphql-tag';
 const createSnapshotsQuery = (typeName, isPreviewable) => {
     return gql`
     query ReadSnapshots${typeName} ($page_id: ID!, $limit: Int!, $offset: Int!) {
-        readOne${typeName}(
-          ID: $page_id
-        ) {
-          ID
-          ${isPreviewable ? 'AbsoluteLink' : ''}
-          SnapshotHash
-          SnapshotHistory (limit: $limit, offset: $offset) {
-            pageInfo {
-              totalCount
-            }
-            edges {
-              node {
-                ID
-                LastEdited
-                ActivityDescription
-                ActivityType
-                ActivityAgo
-                IsFullVersion
-                IsLiveSnapshot
-                BaseVersion
-                Message
-                Author {
-                  FirstName
-                  Surname
-                }
-                OriginVersion {
-                  Version
-                  ${isPreviewable ? 'AbsoluteLink' : ''}
-                  Author {
-                    FirstName
-                    Surname
-                  }
-
-                  Published
-                  Publisher {
-                    FirstName
-                    Surname
-                  }
-                  LatestDraftVersion
-                }
+      readOne${typeName}(
+        Versioning: {
+          Mode: LATEST
+        },
+        ID: $page_id
+      ) {
+        ID
+        SnapshotHash
+        Versions (limit: $limit, offset: $offset, sortBy: [{
+          field: Version,
+          direction: DESC
+        }]) {
+          pageInfo {
+            totalCount
+          }
+          edges {
+            node {
+              Version
+              ${isPreviewable ? 'AbsoluteLink' : ''}
+              Author {
+                FirstName
+                Surname
               }
+              Publisher {
+                FirstName
+                Surname
+              }
+              Published
+              LiveVersion
+              LatestDraftVersion
+              LastEdited
             }
           }
         }
       }
+    }
 
     `;
 };

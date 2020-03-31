@@ -162,14 +162,14 @@ class HistoryViewerVersion extends Component {
     if (!isActive && !compare) {
       return (
         <span className="history-viewer__actions" role="cell">
-          <ActivityButtonComponent snapshotID={version.ID} />
+          <ActivityButtonComponent version={version.Version} />
         </span>
       );
     }
 
     return (
       <span className="history-viewer__actions" role="cell">
-        <ActivityButtonComponent snapshotID={version.ID} />
+        <ActivityButtonComponent version={version.Version} />
         {this.renderCompareButton()}
         {this.renderSelectedMessage()}
         {isActive && (
@@ -181,13 +181,16 @@ class HistoryViewerVersion extends Component {
   render() {
     const { version, isShowingActivity, ActivityPanelComponent } = this.props;
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
+    const { Version } = version;
+    const fromVersion = Version - 1;
+    const toVersion = Version;
 
     return (
       <li className={this.getClassNames()} role="row">
         <span
           className="history-viewer__version-link"
           role="button"
-          title={i18n.inject(rowTitle, { version: version.Version })}
+          title={i18n.inject(rowTitle, { version: Version })}
           onClick={this.handleClick}
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
@@ -198,7 +201,7 @@ class HistoryViewerVersion extends Component {
               {' '}
               <small>{getTime(version.LastEdited)}</small>
             </span>
-            {version.ActivityType === 'PUBLISHED' && (
+            {version.Published && (
               <span className="history-viewer__publish-badge history-viewer__state--published">
                 <span className="icon font-icon-rocket" /> Published
               </span>
@@ -213,7 +216,7 @@ class HistoryViewerVersion extends Component {
         {isShowingActivity && (
           <React.Fragment>
             <div style={{flexBasis: '100%', height: 0}} />
-            <ActivityPanelComponent snapshotID={version.ID} />
+            <ActivityPanelComponent fromVersion={fromVersion} toVersion={toVersion} />
           </React.Fragment>
         )}
       </li>
@@ -248,7 +251,7 @@ export { HistoryViewerVersion as Component };
 
 function mapStateToProps (state, ownProps) {
   return {
-    isShowingActivity: state.versionedAdmin.historyViewer.showingActivity.includes(ownProps.version.ID),
+    isShowingActivity: state.versionedAdmin.historyViewer.showingActivity.includes(ownProps.version.Version),
   }
 };
 

@@ -12,9 +12,6 @@ SilverStripe\Core\Injector\Injector:
 SilverStripe\GraphQL\Scaffolding\Scaffolders\DataObjectScaffolder:
   extensions:
     - SilverStripe\SnapshotAdmin\DataObjectScaffolderExtension
-SilverStripe\ORM\DataObject:
-  extensions:
-    - SilverStripe\SnapshotAdmin\SnapshotPublishableExtension
 SilverStripe\GraphQL\Manager:
   schemas:
     admin:
@@ -22,7 +19,8 @@ SilverStripe\GraphQL\Manager:
         SnapshotActivityEntry: SilverStripe\SnapshotAdmin\SnapshotActivityEntryType
         Snapshot: SilverStripe\SnapshotAdmin\SnapshotType
       queries:
-        readSnapshot: SilverStripe\SnapshotAdmin\SnapshotQuery
+        readLatestSnapshotFromVersion: SilverStripe\SnapshotAdmin\LatestSnapshotQuery
+        readActivity: SilverStripe\SnapshotAdmin\ActivityQuery
       scaffolding_providers:
         - SilverStripe\SnapshotAdmin\SnapshotScaffoldingProvider
 SilverStripe\Admin\LeftAndMain:

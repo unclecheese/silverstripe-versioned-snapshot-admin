@@ -21,15 +21,6 @@ class SnapshotType extends TypeCreator
     {
         return [
             'ID' => ['type' => Type::id()],
-            'ActivityFeed' => [
-                'type' => Type::listOf($this->manager->getType('SnapshotActivityEntry')),
-                'args' => [
-                    'OriginHash' => ['type' => Type::nonNull(Type::string())],
-                ],
-                'resolve' => function ($obj, $args = []) {
-                    return $obj->getActivityFeed($args['OriginHash']);
-                }
-            ],
             'PublishedSummary' => [
                 'type' => Type::listOf(Type::string()),
                 'resolve' => function ($obj) {

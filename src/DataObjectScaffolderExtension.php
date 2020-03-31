@@ -3,13 +3,8 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use GraphQL\Type\Definition\EnumType;
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
 use SilverStripe\GraphQL\Manager;
 use SilverStripe\GraphQL\Scaffolding\Scaffolders\DataObjectScaffolder;
-use SilverStripe\GraphQL\Scaffolding\StaticSchema;
-use SilverStripe\Security\Member;
-use SilverStripe\Snapshots\ActivityEntry;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\GraphQL\Extensions\DataObjectScaffolderExtension as VersionedDataObjectScaffolderExtension;
 use SilverStripe\Versioned\Versioned;
@@ -31,48 +26,9 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
         $owner = $this->owner;
 
         $instance = $owner->getDataObjectInstance();
-        $class = $owner->getDataObjectClass();
         if (!$instance->hasExtension(SnapshotPublishable::class) || !$instance->hasExtension(Versioned::class)) {
             return;
         }
-        $versionTypeName = $this->createVersionedTypeName($class);
-        $memberType = StaticSchema::inst()->typeNameForDataObject(Member::class);
-        $snapshotName = $this->createTypeName($class);
-        $snapshotType = new ObjectType([
-            'name' => $snapshotName,
-            'fields' => function () use ($manager, $versionTypeName, $memberType) {
-                return [
-                    'ID' => Type::id(),
-                    'LastEdited' => Type::string(),
-                    'ActivityDescription' => Type::string(),
-                    'ActivityType' => $this->createActivityEnum(),
-                    'ActivityAgo' => Type::string(),
-                    'OriginVersion' => $manager->getType($versionTypeName),
-                    'Author' => $manager->getType($memberType),
-                    'IsFullVersion' => Type::boolean(),
-                    'IsLiveSnapshot' => Type::boolean(),
-                    'BaseVersion' => Type::int(),
-                    'Message' => Type::string(),
-                ];
-            }
-        ]);
-
-        $manager->addType($snapshotType, $snapshotName);
         $owner->addField('SnapshotHash');
-        $owner
-            ->nestedQuery('SnapshotHistory', new ReadSnapshotHistory($class, $snapshotName));
-    }
-
-    public function createActivityEnum()
-    {
-        return SnapshotActivityType::singleton()->getType();
-    }
-    /**
-     * @param string $class
-     * @return string
-     */
-    protected function createTypeName($class)
-    {
-        return StaticSchema::inst()->typeNameForDataObject($class).'Snapshot';
     }
 }

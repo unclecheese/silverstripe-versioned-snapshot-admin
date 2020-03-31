@@ -100,34 +100,36 @@ class HistoryViewerVersionList extends PureComponent {
   render() {
     const {
       VersionComponent,
-      SnapshotComponent,
+      ActivityPanelComponent,
       versions,
       compareModeAvailable,
       compare
     } = this.props;
+    const firstVersion = versions[0] || null;
     return (
       <div className="history-viewer__list">
         <ul className={this.getClassNames()} role="table">
           {this.renderHeader()}
-          {
-            versions.map((version, index) => (
-              version.IsFullVersion ?
+          {firstVersion && (
+            <ActivityPanelComponent
+              fromVersion={firstVersion.Version}
+              toVersion={null}
+              showPublished={false}
+            />
+          )}
+            <React.Fragment>
+            {versions.map((version) => {
+              return (
                 <VersionComponent
                   key={`${version.ID}--${version.LastEdited}`}
                   isActive={this.isVersionActive(version)}
                   version={version}
                   compare={compare}
                   compareModeAvailable={compareModeAvailable}
-                /> :
-                <SnapshotComponent
-                  isComparing={!!compare}
-                  key={`${version.ID}--${version.LastEdited}`}
-                  isActive={this.isVersionActive(version)}
-                  version={version}
-                  initial={index < 1}
                 />
-            ))
-          }
+              );
+            })}
+            </React.Fragment>            
         </ul>
       </div>
     );
@@ -172,13 +174,13 @@ export default compose(
       'FormAlert',
       'SnapshotHistoryViewerHeading',
       'SnapshotHistoryViewerVersion',
-      'SnapshotHistoryViewerSnapshot'
+      'SnapshotActivityPanel',
     ],
-    (FormAlert, HistoryViewerHeading, HistoryViewerVersion, HistoryViewerSnapshot) => ({
+    (FormAlert, HistoryViewerHeading, HistoryViewerVersion, ActivityPanelComponent) => ({
       FormAlertComponent: FormAlert,
       HeadingComponent: HistoryViewerHeading,
       VersionComponent: HistoryViewerVersion,
-      SnapshotComponent: HistoryViewerSnapshot,
+      ActivityPanelComponent: ActivityPanelComponent,
     }),
     () => 'VersionedAdmin.HistoryViewer.HistoryViewerVersionList'
   )

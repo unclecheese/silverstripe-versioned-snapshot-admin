@@ -116,18 +116,17 @@ export function setCompareTo(version) {
   };
 }
 
-export function showActivity(snapshotID) {
-  console.log('showactivity', snapshotID);
+export function showActivity(version) {
   return {
     type: HISTORY_VIEWER.SHOW_ACTIVITY,
-    payload: snapshotID,
+    payload: version,
   };
 }
 
-export function hideActivity(snapshotID) {
+export function hideActivity(version) {
   return {
     type: HISTORY_VIEWER.HIDE_ACTIVITY,
-    payload: snapshotID,
+    payload: version,
   };
 }
 

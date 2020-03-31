@@ -28,16 +28,16 @@ ActivityButton.propTypes = {
 const mapDispatchToProps = (dispatch, ownProps) => ({
     show(e) {
         e.stopPropagation();
-        dispatch(showActivity(ownProps.snapshotID));
+        dispatch(showActivity(ownProps.version));
     },
     hide(e) {
         e.stopPropagation();
-        dispatch(hideActivity(ownProps.snapshotID));
+        dispatch(hideActivity(ownProps.version));
     },
 });
 
 const mapStateToProps = (state, ownProps) => ({
-    isActive: state.versionedAdmin.historyViewer.showingActivity.includes(ownProps.snapshotID),
+    isActive: state.versionedAdmin.historyViewer.showingActivity.includes(ownProps.version),
 });
 
 export default compose(

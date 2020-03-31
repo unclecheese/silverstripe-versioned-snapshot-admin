@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import Loading from 'components/Loading/Loading';
@@ -6,16 +7,22 @@ import { getTimestamp } from '../../helpers/dates';
 import useSnapshotContext from './useSnapshotContext';
 
 const QUERY = gql`
-query ReadSnapshot($ID: ID!, $OriginHash: String!) {
-    readSnapshot(ID: $ID) {
-      ID
-      ActivityFeed(OriginHash: $OriginHash) {
+query ReadActivity(
+    $OriginHash: String!,
+    $FromVersion: Int!,
+    $ToVersion: Int,
+    $ThisVersion: Int!,
+    $ShowPublished: Boolean!
+) {
+    readActivity(origin: $OriginHash, fromVersion: $FromVersion, toVersion: $ToVersion) {
         Date
         Description
         AuthorName
         Action
-      }
+    }
+    readLatestSnapshotFromVersion(origin: $OriginHash, version: $ThisVersion) @include (if: $ShowPublished) {
       PublishedSummary
+      ID
     }
   }
 `;
@@ -37,11 +44,17 @@ const getIconForAction = (action) => {
 };
 
 
-const ActivityPanel = ({ snapshotID }) => {
-    const { originHash } = useSnapshotContext();
+const ActivityPanel = ({ fromVersion, toVersion, showPublished = true }) => {
+    const { originHash } = useSnapshotContext();    
     return (
         <div className="history-viewer__activity-panel">
-            <Query query={QUERY} variables={{ID: snapshotID, OriginHash: originHash }}>
+            <Query query={QUERY} variables={{
+                OriginHash: originHash,
+                FromVersion: fromVersion,
+                ToVersion: toVersion,
+                ShowPublished: showPublished,
+                ThisVersion: showPublished ? toVersion : fromVersion,
+            }}>
                 {({ loading, error, data }) => {
                     if (loading) {
                         return <Loading />;
@@ -57,17 +70,26 @@ const ActivityPanel = ({ snapshotID }) => {
                             </div>
                         );
                     }
-                    const { ActivityFeed, PublishedSummary } = data.readSnapshot;
+                    const ActivityFeed = data.readActivity;
+                    if (!ActivityFeed || !ActivityFeed.length) {
+                        return null;
+                    }
+                    let published = null;
+                    if (data.readLatestSnapshotFromVersion) {
+                        published = data.readLatestSnapshotFromVersion.PublishedSummary;
+                    }
                     return (
                         <div className="history-viewer__activity-detail">
-                            {PublishedSummary && (
-                                <ul className="history-viewer__published-summary">
-                                    {PublishedSummary.map(p => (
-                                        <li key={p}>{getIconForAction('PUBLISHED')} {p}</li>
-                                    ))}
-                                </ul>
+                            {published && (
+                                <React.Fragment>
+                                    <ul className="history-viewer__published-summary">
+                                        {published.map(p => (
+                                            <li key={p}>{getIconForAction('PUBLISHED')} {p}</li>
+                                        ))}
+                                    </ul>
+                                    <hr />          
+                                </React.Fragment>                      
                             )}
-                            <hr />
                             <h3>Activity of linked items</h3>
                             <ul>
                                 {ActivityFeed.map(activity => {
@@ -88,13 +110,23 @@ const ActivityPanel = ({ snapshotID }) => {
                                         </li>
                                     );
                                 })}
-                            </ul>                        
+                            </ul>  
                         </div>
                     )                    
                 }}
             </Query>
         </div>
     );
+};
+
+ActivityPanel.propTypes = {
+    fromVersion: PropTypes.number,
+    toVersion: PropTypes.number,
+    showPublished: PropTypes.boolean,
+};
+
+ActivityPanel.defaultProps = {
+    showPublished: true,
 };
 
 export default ActivityPanel;
